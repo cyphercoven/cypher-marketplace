@@ -1,0 +1,47 @@
+<!doctype html>
+<!--
+  PURPOSE
+  -------
+  Minimal starting point for cypher-build-app: a page built from cypherui
+  `cu-*` elements only. Raw HTML appears in exactly two places below —
+  inside prose/markdown content, and inside an alert's description — per
+  the kit-only rule in ../SKILL.md.
+
+  AGENT NOTES
+  -----------
+  - KIT_CHANNEL_URL below is a placeholder, not an infra fact. Replace it
+    with the channel address `knowledge {topic: "cypherui"}` returns at
+    run time, right before you load the kit — never hardcode a real
+    channel address here or anywhere else in this template.
+  - Confirm every tag and attribute used here against the kit's
+    `custom-elements.json` before shipping; this template predates that
+    lookup and may not match the kit's current element names exactly.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Hello, cypherui</title>
+  <script type="module" src="KIT_CHANNEL_URL/cypherui.js"></script>
+  <script type="module" src="./main.js"></script>
+</head>
+<body>
+  <cu-app>
+    <cu-page heading="Hello">
+      <cu-card>
+        <p slot="body">
+          This paragraph is prose content inside a <code>cu-card</code> —
+          raw HTML is allowed here because it's markdown/body copy, not a
+          UI element standing in for a kit component.
+        </p>
+        <cu-button id="greet" label="Say hello"></cu-button>
+      </cu-card>
+      <cu-alert
+        id="greeting"
+        hidden
+        variant="info"
+        description="<strong>Hi!</strong> raw HTML is also allowed inside an alert description."
+      ></cu-alert>
+    </cu-page>
+  </cu-app>
+</body>
+</html>

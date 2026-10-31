@@ -1,0 +1,16 @@
+{
+  "name": "cypher",
+  "version": "0.11.0",
+  "description": "Cypher signs you in with your CypherAuth passkey and gives your agent exactly your own access to the stack, from Claude, Codex, Cursor or Antigravity.",
+  "author": {
+    "name": "cypherwitch"
+  },
+  "skills": "./skills/",
+  "mcpServers": "./mcp.json",
+  "interface": {
+    "displayName": "Cypher",
+    "shortDescription": "Cypher signs you in with your CypherAuth passkey and gives your agent exactly your own access to the stack, from Claude, Codex, Cursor or Antigravity.",
+    "composerIcon": "./assets/house/app-icon/app-icon-512.png",
+    "logo": "./assets/house/app-icon/app-icon-512.png"
+  }
+}
