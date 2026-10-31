@@ -1,0 +1,17 @@
+{
+  "name": "cypher",
+  "owner": {
+    "name": "cypherwitch"
+  },
+  "metadata": {
+    "description": "Cypher signs you in with your CypherAuth passkey and gives your agent exactly your own access to the stack, from Claude, Codex, Cursor or Antigravity."
+  },
+  "plugins": [
+    {
+      "name": "cypher",
+      "source": "./",
+      "description": "Cypher signs you in with your CypherAuth passkey and gives your agent exactly your own access to the stack, from Claude, Codex, Cursor or Antigravity.",
+      "version": "0.10.0"
+    }
+  ]
+}
