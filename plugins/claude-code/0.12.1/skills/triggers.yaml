@@ -1,0 +1,132 @@
+# skills/triggers.yaml
+#
+# PURPOSE
+# -------
+# S-54: the one table that says which skill must be loaded before which work.
+# The plugin hook (scripts/skill_gate.py), the gateway (tJ2) and the seat hook (tJ3)
+# all read this file; none keeps a copy.
+#
+# CONVENTIONS
+# -----------
+# - A row is `{id, skill, [reference], when}`. `when` holds one or more keys; a row
+#   fires when ALL its keys match:
+#     paths:           globs for a file an edit tool is about to change (`**` crosses
+#                      directories; a pattern without `/` matches the file name anywhere)
+#     tools:           tool-name globs. Each name is listed bare and with the
+#                      `mcp__*__` prefix a host adds, and both are tested as written
+#     result_contains: regex searched in the tool's result. A result exists only after
+#                      the call, so such a row never blocks: PostToolUse tells the agent
+#                      to load the skill now
+#     input_has:       input keys the call must carry (any one)
+#     commands:        regexes searched in a Bash command
+# - `reference` is a file under the skill that the agent must also read for this row.
+# - Every row needs one should-load and one should-not case in evals/triggers/cases.yaml;
+#   `make check-evals` fails a row without both.
+#
+# AGENT NOTES
+# -----------
+# - A new skill name here must exist under skills/. Tool names are patterns, never
+#   hosts or secrets (`make scan` reads this file).
+
+rows:
+  - id: dev-rust
+    skill: cypher-dev
+    reference: references/rust.md
+    when:
+      paths: ["*.rs", "Cargo.toml", "Cargo.lock", "rust-toolchain.toml", "clippy.toml", "rustfmt.toml"]
+  - id: dev-typescript
+    skill: cypher-dev
+    reference: references/typescript.md
+    when:
+      paths: ["*.ts", "*.tsx", "package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml", "tsconfig*.json", "vite.config.*", "vitest.config.*", "eslint.config.*"]
+  - id: dev-python
+    skill: cypher-dev
+    reference: references/python.md
+    when:
+      paths: ["*.py", "pyproject.toml", "uv.lock", "requirements*.txt", "ruff.toml", "pytest.ini"]
+  - id: design-kit
+    skill: cypher-design
+    when:
+      paths: ["*.dc.html", "**/cypherui/**", "**/canvas/**", "*.canvas.*"]
+  - id: docs-prose
+    skill: cypher-docs
+    when:
+      paths: ["*.md", "docs/adr/**", "STATUS.md"]
+  - id: secrets-vault
+    skill: cypher-secrets
+    when:
+      tools: ["vault_*", "mcp__*__vault_*", "guest_secret_*", "mcp__*__guest_secret_*"]
+  - id: secrets-carried
+    skill: cypher-secrets
+    when:
+      input_has: [secrets]
+  - id: ops-tools
+    skill: cypher-ops
+    when:
+      tools:
+        - "ct_*"
+        - "mcp__*__ct_*"
+        - "pve_*"
+        - "mcp__*__pve_*"
+        - "nas_*"
+        - "mcp__*__nas_*"
+        - "flint_*"
+        - "mcp__*__flint_*"
+        - "cf_*"
+        - "mcp__*__cf_*"
+        - "switch_*"
+        - "mcp__*__switch_*"
+        - "utils_*"
+        - "mcp__*__utils_*"
+  - id: ops-stacks
+    skill: cypher-ops
+    when:
+      paths: ["**/cypherops/stacks/**"]
+  - id: media-stack
+    skill: cypher-media
+    when:
+      paths: ["**/stacks/media/**", "**/media-stack/**"]
+  - id: media-tools
+    skill: cypher-media
+    when:
+      tools: ["media_*", "mcp__*__media_*"]
+  - id: scheduled-tasks
+    skill: cypher-scheduled-tasks
+    when:
+      tools:
+        - "create_trigger"
+        - "mcp__*__create_trigger"
+        - "update_trigger"
+        - "mcp__*__update_trigger"
+        - "delete_trigger"
+        - "mcp__*__delete_trigger"
+        - "list_triggers"
+        - "mcp__*__list_triggers"
+        - "fire_trigger"
+        - "mcp__*__fire_trigger"
+        - "CronCreate"
+        - "CronDelete"
+        - "RemoteTrigger"
+  - id: review-pr
+    skill: cypher-review
+    when:
+      tools:
+        - "forgejo_pr_open"
+        - "mcp__*__forgejo_pr_open"
+        - "forgejo_pr_merge"
+        - "mcp__*__forgejo_pr_merge"
+        - "forgejo_pr_review"
+        - "mcp__*__forgejo_pr_review"
+  - id: delegation-seats
+    skill: cypher-delegation
+    when:
+      paths: ["**/factory/bin/seat.sh", "**/factory/bin/review.sh", "**/factory/bin/uat.sh"]
+  - id: delegation-run
+    skill: cypher-delegation
+    when:
+      commands: ['factory/bin/(seat|review|uat)\.sh']
+  - id: mirror-merge
+    skill: cypher-mirror
+    when:
+      tools: ["forgejo_pr_merge", "mcp__*__forgejo_pr_merge"]
+      result_contains: '"will_mirror"\s*:\s*\[\s*[^\]\s]'

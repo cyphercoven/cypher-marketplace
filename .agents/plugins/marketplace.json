@@ -8,10 +8,10 @@
       "name": "cypher",
       "source": {
         "source": "local",
-        "path": "./plugins/codex-cli/0.12.0"
+        "path": "./plugins/codex-cli/0.12.1"
       },
       "description": "Cypher signs you in with your CypherAuth passkey and gives your agent exactly your own access to the stack, from Claude, Codex, Cursor or Antigravity.",
-      "version": "0.12.0"
+      "version": "0.12.1"
     }
   ]
 }
