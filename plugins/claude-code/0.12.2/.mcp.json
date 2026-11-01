@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "cypher-mcp": {
+      "type": "http",
+      "url": "https://mcp.cypherwitch.com/mcp",
+      "oauth": {}
+    }
+  }
+}
