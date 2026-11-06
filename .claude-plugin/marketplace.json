@@ -9,9 +9,9 @@
   "plugins": [
     {
       "name": "cypher",
-      "source": "./plugins/claude-code/0.13.9",
+      "source": "./plugins/claude-code/0.13.10",
       "description": "Cypher signs you in with your CypherAuth passkey and gives your agent exactly your own access to the stack, from Claude, Codex, Cursor or Antigravity.",
-      "version": "0.13.9"
+      "version": "0.13.10"
     }
   ]
 }
