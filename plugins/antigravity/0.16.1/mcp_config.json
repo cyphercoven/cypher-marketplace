@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "cypher-mcp": {
+      "serverUrl": "https://mcp.cypherwitch.com/mcp"
+    }
+  }
+}
