@@ -1,0 +1,70 @@
+# plugin.src.yaml
+#
+# PURPOSE
+# -------
+# THE source for this plugin. `make manifests` (scripts/generate_manifests.py)
+# reads this file and writes every host's manifest from it (Claude, Codex,
+# Cursor, Antigravity, Agent Plugins 1.0 — list in generate_manifests.py).
+# Hand-edit
+# this file; never hand-edit a generated one — `make check` diffs them.
+#
+# CONVENTIONS
+# -----------
+# - One MCP server only (S-25): cypher-mcp, streamable HTTP, OAuth via
+#   dynamic client registration. No headers, no bearer, no static token —
+#   the gateway signs people in with a passkey after the OAuth hop.
+# - version bumps with every change outside docs (S-30); CHANGELOG.md gets
+#   a line in the same change. See CLAUDE.md.
+#
+# AGENT NOTES
+# -----------
+# - No infra facts here beyond the one gateway URL the brief explicitly
+#   names (mcp.cypherwitch.com — also the only live connector today, see
+#   INTENT.md "must never" break it). Everything else a skill needs comes
+#   from the gateway after sign-in (S-37).
+
+name: cypher
+version: 0.16.0
+description: >-
+  Cypher signs you in with your CypherAuth passkey and gives your agent
+  exactly your own access to the stack, from Claude, Codex, Cursor or Antigravity.
+author:
+  name: cypherwitch
+
+# Brand (S-08/S-09): assets come only from @cyphercoven/cypher-brand via
+# `make brand`; the pin here must equal brand/package.json + package-lock.json.
+brand:
+  display_name: Cypher
+  package: "@cyphercoven/cypher-brand"
+  version: 0.3.0
+
+mcp_server:
+  name: cypher-mcp
+  url: https://mcp.cypherwitch.com/mcp
+  transport: streamable-http
+  auth: oauth-dcr
+
+skills:
+  - cypher-admin
+  - cypher-start
+  - cypher-setup
+  - cypher-troubleshoot
+  - cypher-build-app
+  - cypher-deploy
+  - cypher-workflow
+  - cypher-spec
+  - cypher-design
+  - cypher-secrets
+  - cypher-scheduled-tasks
+  - cypher-dev
+  - cypher-docs
+  - cypher-architecture
+  - cypher-systems-thinking
+  - cypher-review
+  - cypher-delegation
+  - cypher-handover
+  - cypher-afk
+  - cypher-ops
+  - cypher-media
+  - cypher-legal
+  - cypher-animation
