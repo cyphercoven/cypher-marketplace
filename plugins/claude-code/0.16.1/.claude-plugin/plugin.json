@@ -1,0 +1,9 @@
+{
+  "name": "cypher",
+  "displayName": "Cypher",
+  "version": "0.16.1",
+  "description": "Cypher signs you in with your CypherAuth passkey and gives your agent exactly your own access to the stack, from Claude, Codex, Cursor or Antigravity.",
+  "author": {
+    "name": "cypherwitch"
+  }
+}
