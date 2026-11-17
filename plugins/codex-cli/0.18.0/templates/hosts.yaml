@@ -1,0 +1,253 @@
+# templates/hosts.yaml
+#
+# PURPOSE
+# -------
+# Per host: the exact place to paste the rendered instructions (S-18), the
+# provider doc it came from and the date it was checked. /cypher-admin setup reads
+# `location` aloud; CLI hosts with `can_write_file: true` also get
+# `target_path` offered as a write-after-confirm (S-19).
+#
+# CONVENTIONS
+# -----------
+# - `autoload` (S-49) is on hosts that cannot load a skill by description: the file
+#   and the one line that tell the agent to load cypher-workflow first for cypher*
+#   work. It is a pointer, never rule text.
+# - `session_start` (S-52) is on every host: `mechanism` (hook | gateway | autoload) and `detail`
+#   say how cypher-workflow gets loaded at session start. `hooks` says whether the host has hooks
+#   (`supported`, `note`, and for hook hosts `doc_url` + `checked`). Only Claude Code ships a hook.
+# - `anchor` is a phrase in the doc's text; scripts/check_hosts.py hashes the
+#   text from `anchor` for `window` characters and compares it with
+#   templates/hosts.hashes.json (S-20). Edit location + checked together.
+# - `bundle` (S-74) is on hosts that install the plugin itself: `format` (git-repo | zip |
+#   directory), `manifests` (host files in the bundle) and optional `catalogue` (the marketplace
+#   file the host installs from). A host without `bundle` takes pasted instructions only, so
+#   `make release` builds nothing for it. Doc URL and fetch date sit in a comment per host.
+# - `checked` is the date a person or the monthly task last confirmed the doc.
+#
+# AGENT NOTES
+# -----------
+# - The monthly task (docs/hosts-check-task.md) is the only thing that edits
+#   this file after a doc changes; it opens a PR.
+
+hosts:
+  claude-ai:
+    name: Claude (claude.ai, web)
+    session_start:
+      mechanism: gateway
+      detail: "the gateway's session_begin reply carries the load-cypher-workflow line (tJ2 adds it)"
+    hooks:
+      supported: false
+      note: chat app with no local process to run a hook
+    location: "Project › Set project instructions (on the project's page, then Save instructions)"
+    doc_url: https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects
+    checked: 2026-10-25
+    anchor: Set project instructions
+    window: 220
+    can_write_file: false
+  claude-desktop:
+    name: Claude desktop app (chat)
+    session_start:
+      mechanism: gateway
+      detail: "the gateway's session_begin reply carries the load-cypher-workflow line (tJ2 adds it)"
+    hooks:
+      supported: false
+      note: chat app with no local process to run a hook
+    location: "Project › Set project instructions (same as claude.ai; Save instructions)"
+    doc_url: https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects
+    checked: 2026-10-25
+    anchor: Set project instructions
+    window: 220
+    can_write_file: false
+    # bundle (S-74): fetched 2026-10-30 from https://code.claude.com/docs/en/plugin-marketplaces
+    # - "Send them the plugin's directory or a .zip of it" (publish.md#share-a-plugin-without-a-marketplace);
+    #   no catalogue for a zip.
+    # - S-81 `doc`: the section scripts/check_hosts.py hashes as `<host>#bundle-doc` (same fields as anchor/window above).
+    bundle:
+      format: zip
+      manifests: [.claude-plugin/plugin.json, .mcp.json]
+      doc: {url: "https://code.claude.com/docs/en/plugin-marketplaces", anchor: "send them the plugin", window: 200}
+  cowork:
+    name: Claude Cowork
+    session_start:
+      mechanism: gateway
+      detail: "the gateway's session_begin reply carries the load-cypher-workflow line (tJ2 adds it); cypher-workflow §0 already makes it the first call"
+    hooks:
+      supported: false
+      note: chat app with no local process to run a hook
+    location: "Claude desktop › Settings › Cowork › Global instructions › Edit (applies to every Cowork session)"
+    doc_url: https://support.claude.com/en/articles/13345190
+    checked: 2026-10-25
+    anchor: Global instructions You can give
+    window: 220
+    can_write_file: false
+  claude-code:
+    name: Claude Code
+    session_start:
+      mechanism: hook
+      detail: "plugin hooks/hooks.json SessionStart (startup|resume|clear|compact) runs scripts/skill_gate.py session, one additionalContext line"
+    hooks:
+      supported: true
+      doc_url: https://code.claude.com/docs/en/hooks
+      checked: 2026-10-30
+      note: "PreToolUse deny (hookSpecificOutput.permissionDecision), PostToolUse, SessionStart additionalContext; plugin hooks/hooks.json with ${CLAUDE_PLUGIN_ROOT} and ${CLAUDE_PLUGIN_DATA}. Typing /skill bypasses PreToolUse."
+    location: "~/.claude/CLAUDE.md (user instructions, all projects)"
+    doc_url: https://code.claude.com/docs/en/memory
+    checked: 2026-10-25
+    anchor: User instructions ~/.claude/CLAUDE.md
+    window: 160
+    can_write_file: true
+    target_path: ~/.claude/CLAUDE.md
+    # bundle (S-74): fetched 2026-10-30 from https://code.claude.com/docs/en/plugin-marketplaces
+    # - A marketplace is a git repo with .claude-plugin/marketplace.json (name, owner, plugins[]);
+    #   `claude plugin validate --strict <dir>` checks it.
+    # - S-76 (checked 2026-10-30, same page): a relative `source` must start "./" and resolves from the marketplace
+    #   root, so a versioned subdirectory works: scripts/marketplace.py points `source` at ./plugins/claude-code/<v>.
+    bundle:
+      format: git-repo
+      manifests: [.claude-plugin/plugin.json, .mcp.json]
+      catalogue: .claude-plugin/marketplace.json
+      doc: {url: "https://code.claude.com/docs/en/plugin-marketplaces", anchor: "Create the marketplace file", window: 300}
+  codex-cli:
+    name: Codex CLI / desktop
+    session_start:
+      mechanism: autoload
+      detail: "the AGENTS.md rule below; a SessionStart hook is possible but not shipped (payload shape not verified)"
+    hooks:
+      supported: true
+      doc_url: https://learn.chatgpt.com/docs/hooks
+      checked: 2026-10-30
+      note: "PreToolUse and SessionStart exist; ~/.codex/hooks.json, <repo>/.codex/hooks.json, config.toml [hooks], or a plugin's hooks/hooks.json; hooks must be trusted via /hooks"
+    location: "~/.codex/AGENTS.md (or $CODEX_HOME/AGENTS.md; AGENTS.override.md wins if present)"
+    doc_url: https://learn.chatgpt.com/docs/agent-configuration/agents-md
+    checked: 2026-10-25
+    anchor: Codex home directory
+    window: 220
+    can_write_file: true
+    target_path: ~/.codex/AGENTS.md
+    # bundle (S-74): checked 2026-10-30 at https://learn.chatgpt.com/docs/plugins (was developers.openai.com/codex/plugins, 308).
+    # - Installs from a marketplace source (a repo marketplace).
+    # - CONFIRMED 2026-10-30 at https://developers.openai.com/codex/plugins/build (the build guide, not /plugins):
+    #   the repo marketplace file is $REPO_ROOT/.agents/plugins/marketplace.json, {name, plugins[{name,
+    #   source:{source:"local", path:"./<dir>"}, policy, category}]}; `path` is ./-prefixed, relative to the
+    #   marketplace root; users add it with `codex plugin marketplace add owner/repo[@ref]` (any Git URL works).
+    #   So the generated catalogue is right and scripts/marketplace.py only rewrites `source.path` per release.
+    bundle:
+      format: git-repo
+      manifests: [.codex-plugin/plugin.json, mcp.json]
+      catalogue: .agents/plugins/marketplace.json
+      doc: {url: "https://developers.openai.com/codex/plugins/build", anchor: "Add a marketplace file at $REPO_ROOT", window: 300}
+    autoload:
+      file: "~/.codex/AGENTS.md"
+      line: "For any work on the Cypher Suite or a cypher* repo, load the cypher-workflow skill first, before anything else."
+  chatgpt-desktop:
+    name: ChatGPT desktop app
+    session_start:
+      mechanism: gateway
+      detail: "the gateway's session_begin reply carries the load-cypher-workflow line (tJ2 adds it)"
+    hooks:
+      supported: false
+      note: chat app with no local process to run a hook
+    location: "Project ••• menu › Project settings › Instructions (project-wide); or Settings › Personalization › Custom Instructions (all chats)"
+    doc_url: https://help.openai.com/en/articles/10169521-projects-in-chatgpt
+    checked: 2026-10-25
+    anchor: Project settings
+    window: 220
+    can_write_file: false
+    note: help.openai.com refuses scripted fetches (HTTP 403), so the content hash stays unset; the monthly task checks this one by search.
+  antigravity:
+    name: Google Antigravity
+    session_start:
+      mechanism: autoload
+      detail: "the GEMINI.md rule below; a SessionStart hook is possible but not shipped (payload shape not verified)"
+    hooks:
+      supported: true
+      doc_url: https://www.antigravity.google/docs/hooks
+      checked: 2026-10-30
+      note: "PreToolUse and SessionStart exist; .agents/hooks.json (workspace), ~/.gemini/config/hooks.json (global), or a plugin's hooks.json (CLI only)"
+    location: "~/.gemini/GEMINI.md (global, always on); workspace: AGENTS.md or .agents/rules/*.md"
+    doc_url: https://www.antigravity.google/docs/rules/
+    checked: 2026-10-25
+    anchor: gemini/GEMINI.md , ~/.gemini/config/AGENTS.md
+    window: 160
+    can_write_file: true
+    target_path: ~/.gemini/GEMINI.md
+    # bundle (S-74): fetched 2026-10-30 from https://www.antigravity.google/docs/plugins
+    # - A plugin is a directory with plugin.json; `agy plugin install <dir | github url>`.
+    #   The page documents no marketplace/catalogue file, so none is written.
+    bundle:
+      format: directory
+      manifests: [plugin.json, mcp_config.json]
+      doc: {url: "https://www.antigravity.google/docs/plugins", anchor: "agy plugin install", window: 200}
+    autoload:
+      file: "~/.gemini/GEMINI.md"
+      line: "For any work on the Cypher Suite or a cypher* repo, load the cypher-workflow skill first, before anything else."
+  vscode-copilot:
+    name: VS Code (GitHub Copilot)
+    session_start:
+      mechanism: autoload
+      detail: "the copilot-instructions.md rule below; a sessionStart hook is possible but not shipped (Preview, payload shape not verified)"
+    hooks:
+      supported: true
+      doc_url: https://code.visualstudio.com/docs/copilot/customization/hooks
+      checked: 2026-10-30
+      note: "sessionStart and preToolUse (Preview); .github/hooks/*.json, ~/.copilot/hooks/, or a plugin's hooks"
+    location: "~/.copilot/copilot-instructions.md (personal, always on); project: .github/copilot-instructions.md or AGENTS.md"
+    doc_url: https://code.visualstudio.com/docs/copilot/customization/custom-instructions
+    checked: 2026-10-25
+    anchor: Use a .github/copilot-instructions.md file For Copilot sessions
+    window: 240
+    can_write_file: false
+    # bundle (S-74): fetched 2026-10-30 from https://code.visualstudio.com/docs/copilot/customization/agent-plugins
+    # - Installs a plugin from a git repo ("Chat: Install Plugin from Source") or a marketplace repo
+    #   (marketplace.json, location not stated there). Single-plugin repo: no catalogue written.
+    # - RESOLVED 2026-10-30 (same page, "Configure plugin marketplaces"): a marketplace is added as a GitHub repo, Git
+    #   URL or local path; its marketplace.json `name` is the marketplace key. VS Code needs no catalogue of its own
+    #   for a single plugin: it installs straight from the plugin repo ("Install Plugin from Source").
+    bundle:
+      format: git-repo
+      manifests: [plugin.json, mcp.json]
+      doc: {url: "https://code.visualstudio.com/docs/copilot/customization/agent-plugins", anchor: "Adding a marketplace makes its plugins available to browse", window: 300}
+    autoload:
+      file: "~/.copilot/copilot-instructions.md"
+      line: "For any work on the Cypher Suite or a cypher* repo, load the cypher-workflow skill first, before anything else."
+  cursor:
+    name: Cursor
+    session_start:
+      mechanism: autoload
+      detail: "the AGENTS.md rule below; a sessionStart hook is possible but not shipped (payload shape not verified)"
+    hooks:
+      supported: true
+      doc_url: https://cursor.com/docs/hooks
+      checked: 2026-10-30
+      note: "sessionStart, preToolUse, beforeShellExecution; .cursor/hooks.json (project) or ~/.cursor/hooks.json (user); exit 2 blocks"
+    location: "Customize › Rules › User Rules (global); project: AGENTS.md in the repo root or .cursor/rules/*.mdc"
+    doc_url: https://cursor.com/docs/context/rules
+    checked: 2026-10-25
+    anchor: User Rules User Rules are global preferences
+    window: 200
+    can_write_file: false
+    # bundle (S-74): fetched 2026-10-30 from https://cursor.com/docs/reference/plugins
+    # - Plugin = directory with .cursor-plugin/plugin.json, hosted in a public git repo. A
+    #   .cursor-plugin/marketplace.json is only for repos with several plugins, so none is written.
+    # - RESOLVED 2026-10-30 (same page, "Cursor multi-plugin repositories"): no catalogue needed for one plugin.
+    bundle:
+      format: git-repo
+      manifests: [.cursor-plugin/plugin.json, mcp.json]
+      doc: {url: "https://cursor.com/docs/reference/plugins", anchor: "Cursor multi-plugin repositories A single Git repository", window: 400}
+    autoload:
+      file: "AGENTS.md"
+      line: "For any work on the Cypher Suite or a cypher* repo, load the cypher-workflow skill first, before anything else."
+  gemini-app:
+    name: Gemini app
+    session_start:
+      mechanism: autoload
+      detail: "the Gem instructions: the rendered project-instructions template carries the load-cypher-workflow pointer"
+    hooks:
+      supported: false
+      note: chat app with no local process to run a hook
+    location: "gemini.google.com › Gems › New Gem › Instructions (paste there, then Save)"
+    doc_url: https://support.google.com/gemini/answer/15146780
+    checked: 2026-10-25
+    anchor: Enter a name and instructions for your Gem
+    window: 160
+    can_write_file: false
