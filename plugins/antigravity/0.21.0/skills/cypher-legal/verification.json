@@ -1,0 +1,222 @@
+[
+  {
+    "skill": "law-research",
+    "call": "law_legislation_get_section",
+    "args": {
+      "type": "ukpga",
+      "year": 2023,
+      "number": 28,
+      "section": "6",
+      "max_chars": 50000
+    },
+    "result": {
+      "title": "Role of courts",
+      "version_date": "2025-06-04",
+      "in_force": null,
+      "in_force_verified": false,
+      "source_url": "https://www.legislation.gov.uk/ukpga/2023/28/section/6",
+      "content_truncated": false
+    },
+    "checked": "2026-10-28"
+  },
+  {
+    "skill": "law-education",
+    "call": "law_legislation_get_section",
+    "args": {
+      "type": "ukpga",
+      "year": 2014,
+      "number": 6,
+      "section": "36",
+      "max_chars": 6000
+    },
+    "result": {
+      "title": "Assessment of education, health and care needs",
+      "version_date": "2014-09-01",
+      "in_force": null,
+      "in_force_verified": false,
+      "source_url": "https://www.legislation.gov.uk/ukpga/2014/6/section/36",
+      "content_truncated": false
+    },
+    "checked": "2026-10-28"
+  },
+  {
+    "skill": "law-family",
+    "call": "law_legislation_get_section",
+    "args": {
+      "type": "ukpga",
+      "year": 1989,
+      "number": 41,
+      "section": "1",
+      "max_chars": 6000
+    },
+    "result": {
+      "title": "Welfare of the child.",
+      "version_date": "2014-10-22",
+      "in_force": null,
+      "in_force_verified": false,
+      "source_url": "https://www.legislation.gov.uk/ukpga/1989/41/section/1",
+      "content_truncated": false
+    },
+    "checked": "2026-10-28"
+  },
+  {
+    "skill": "law-housing",
+    "call": "law_legislation_get_section",
+    "args": {
+      "type": "ukpga",
+      "year": 1996,
+      "number": 52,
+      "section": "189B",
+      "max_chars": 6000
+    },
+    "result": {
+      "title": "Initial duty owed to all eligible persons who are homeless",
+      "version_date": "2018-04-03",
+      "in_force": null,
+      "in_force_verified": false,
+      "source_url": "https://www.legislation.gov.uk/ukpga/1996/52/section/189B",
+      "content_truncated": false
+    },
+    "checked": "2026-10-28"
+  },
+  {
+    "skill": "law-benefits",
+    "call": "law_legislation_get_section",
+    "args": {
+      "type": "ukpga",
+      "year": 2012,
+      "number": 5,
+      "section": "1",
+      "max_chars": 6000
+    },
+    "result": {
+      "title": "Universal credit",
+      "version_date": "2022-03-30",
+      "in_force": null,
+      "in_force_verified": false,
+      "source_url": "https://www.legislation.gov.uk/ukpga/2012/5/section/1",
+      "content_truncated": false
+    },
+    "checked": "2026-10-28"
+  },
+  {
+    "skill": "law-employment",
+    "call": "law_legislation_get_section",
+    "args": {
+      "type": "ukpga",
+      "year": 1996,
+      "number": 18,
+      "section": "94",
+      "max_chars": 6000
+    },
+    "result": {
+      "title": "The right.",
+      "version_date": "1996-08-22",
+      "in_force": null,
+      "in_force_verified": false,
+      "source_url": "https://www.legislation.gov.uk/ukpga/1996/18/section/94",
+      "content_truncated": false
+    },
+    "checked": "2026-10-28"
+  },
+  {
+    "skill": "law-criminal",
+    "call": "law_legislation_get_section",
+    "args": {
+      "type": "ukpga",
+      "year": 1984,
+      "number": 60,
+      "section": "58",
+      "max_chars": 6000
+    },
+    "result": {
+      "title": "Access to legal advice.",
+      "version_date": "2023-12-20",
+      "in_force": null,
+      "in_force_verified": false,
+      "source_url": "https://www.legislation.gov.uk/ukpga/1984/60/section/58",
+      "content_truncated": false
+    },
+    "checked": "2026-10-28"
+  },
+  {
+    "skill": "law-substances",
+    "call": "law_legislation_get_section",
+    "args": {
+      "type": "ukpga",
+      "year": 1971,
+      "number": 38,
+      "section": "5",
+      "max_chars": 6000
+    },
+    "result": {
+      "title": "Restriction of possession of controlled drugs.",
+      "version_date": "2011-11-15",
+      "in_force": null,
+      "in_force_verified": false,
+      "source_url": "https://www.legislation.gov.uk/ukpga/1971/38/section/5",
+      "content_truncated": false
+    },
+    "checked": "2026-10-28"
+  },
+  {
+    "skill": "law-corporate",
+    "call": "law_legislation_get_section",
+    "args": {
+      "type": "ukpga",
+      "year": 2006,
+      "number": 46,
+      "section": "172",
+      "max_chars": 6000
+    },
+    "result": {
+      "title": "Duty to promote the success of the company",
+      "version_date": "2026-07-16",
+      "in_force": null,
+      "in_force_verified": false,
+      "source_url": "https://www.legislation.gov.uk/ukpga/2006/46/section/172",
+      "content_truncated": false
+    },
+    "checked": "2026-10-28"
+  },
+  {
+    "skill": "law-small-business",
+    "call": "law_legislation_get_section",
+    "args": {
+      "type": "ukpga",
+      "year": 1998,
+      "number": 20,
+      "section": "1",
+      "max_chars": 6000
+    },
+    "result": {
+      "title": "Statutory interest.",
+      "version_date": "1998-11-01",
+      "in_force": null,
+      "in_force_verified": false,
+      "source_url": "https://www.legislation.gov.uk/ukpga/1998/20/section/1",
+      "content_truncated": false
+    },
+    "checked": "2026-10-28"
+  },
+  {
+    "skill": "law-fraud-aml",
+    "call": "law_legislation_get_section",
+    "args": {
+      "type": "ukpga",
+      "year": 2006,
+      "number": 35,
+      "section": "2",
+      "max_chars": 6000
+    },
+    "result": {
+      "title": "Fraud by false representation",
+      "version_date": "2007-01-15",
+      "in_force": null,
+      "in_force_verified": false,
+      "source_url": "https://www.legislation.gov.uk/ukpga/2006/35/section/2",
+      "content_truncated": false
+    },
+    "checked": "2026-10-28"
+  }
+]
