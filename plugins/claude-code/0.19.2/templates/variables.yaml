@@ -1,0 +1,69 @@
+# templates/variables.yaml
+#
+# PURPOSE
+# -------
+# Declares every {{variable}} in project-instructions.md (S-14): the short
+# question /cypher-admin setup asks, its type, and where a prefill comes from.
+#
+# CONVENTIONS
+# -----------
+# - default-source: host user details | settings record | none. "host user
+#   details" is whatever the host already knows about the person (profile
+#   name, saved preferences); "settings record" is the person's saved answers.
+# - `default` is the fallback shown when no prefill exists.
+# - Derived values (pronoun_object, pronoun_possessive, and pronouns = "subject/object")
+#   are computed from `pronoun_subject` by scripts/render_template.py and are not asked.
+#
+# AGENT NOTES
+# -----------
+# - Eight questions at most (S-15): keep this list at or under 8.
+# - `providers` (S-40) is asked but not used by the template; it is saved to the settings record.
+# - `version` is the template version saved as `answers_version`; bump it whenever a question is
+#   added, removed or changes meaning (installed answers then need a re-run of setup).
+
+version: 2
+
+variables:
+  - name: owner_name
+    question: What should I call you?
+    type: text
+    default-source: host user details
+  - name: pronoun_subject
+    question: Which pronouns do you use? (answer she, he or they)
+    type: choice
+    choices: [she, he, they]
+    default-source: settings record
+  - name: owner_role
+    question: What is your role in the suite?
+    type: text
+    default: product manager
+    default-source: settings record
+  - name: answer_style
+    question: How should answers be shaped?
+    type: text
+    default: Short answers, the next action first, one option, a diagram where shape matters.
+    default-source: settings record
+  - name: gates
+    question: Which approval gates are yours?
+    type: text
+    default: spec · design · UAT
+    default-source: settings record
+  - name: previous_name_rule
+    question: Should agents be told never to use a previous name of yours?
+    type: boolean
+    default: false
+    default-source: settings record
+  - name: session_name_prefix
+    question: What prefix names a cross-repo run session?
+    type: text
+    default: Cypher
+    default-source: none
+  - name: providers
+    question: Which AI provider(s) do you use? (any of claude, codex, antigravity, copilot, cursor)
+    type: multichoice
+    choices: [claude, codex, antigravity, copilot, cursor]
+    default-source: settings record
+
+derived:
+  pronoun_object: {from: pronoun_subject, she: her, he: him, they: them}
+  pronoun_possessive: {from: pronoun_subject, she: her, he: his, they: their}
