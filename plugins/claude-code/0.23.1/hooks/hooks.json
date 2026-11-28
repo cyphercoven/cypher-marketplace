@@ -1,0 +1,95 @@
+{
+  "description": "Cypher: update prompts, skill loading and away mode. Nongating hooks are best effort when missing. PreToolUse supervises checkpoint startup and bounds its child runtime; required lifecycle transitions deny on failure while reads and planning remain available. Supported hosts also block outer hook failures.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"import os,runpy,sys;p=sys.argv[1];sys.argv=sys.argv[1:];sys.path[0]=os.path.dirname(p);os.path.isfile(p) and runpy.run_path(p,run_name='__main__')\" \"${CLAUDE_PLUGIN_ROOT}/scripts/update_prompt.py\" hook",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"import os,runpy,sys;p=sys.argv[1];sys.argv=sys.argv[1:];sys.path[0]=os.path.dirname(p);os.path.isfile(p) and runpy.run_path(p,run_name='__main__')\" \"${CLAUDE_PLUGIN_ROOT}/scripts/skill_gate.py\" session",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"import os,runpy,sys;p=sys.argv[1];sys.argv=sys.argv[1:];sys.path[0]=os.path.dirname(p);os.path.isfile(p) and runpy.run_path(p,run_name='__main__')\" \"${CLAUDE_PLUGIN_ROOT}/scripts/afk.py\" session-start",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"import os,runpy,sys;p=sys.argv[1];sys.argv=sys.argv[1:];sys.path[0]=os.path.dirname(p);os.path.isfile(p) and runpy.run_path(p,run_name='__main__')\" \"${CLAUDE_PLUGIN_ROOT}/scripts/afk.py\" precompact",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"import os,runpy,sys;p=sys.argv[1];sys.argv=sys.argv[1:];sys.path[0]=os.path.dirname(p);os.path.isfile(p) and runpy.run_path(p,run_name='__main__')\" \"${CLAUDE_PLUGIN_ROOT}/scripts/afk.py\" prompt",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"import os,runpy,sys;p=sys.argv[1];sys.argv=sys.argv[1:];sys.path[0]=os.path.dirname(p);os.path.isfile(p) and runpy.run_path(p,run_name='__main__')\" \"${CLAUDE_PLUGIN_ROOT}/scripts/afk.py\" stop",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Agent|Task|Edit|Write|MultiEdit|NotebookEdit|Bash|PowerShell|CronCreate|CronDelete|RemoteTrigger|mcp__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"import json,subprocess,sys;exec('payload=sys.stdin.read();parsed=False\\ntry:\\n e=json.loads(payload)\\n if not isinstance(e,dict) or not isinstance(e.get(\\'tool_name\\'),str) or not e[\\'tool_name\\']: raise ValueError(\\'Invalid event\\')\\n n=e[\\'tool_name\\'];a=e.get(\\'tool_input\\',{})\\n if a is None: a={}\\n if not isinstance(a,dict): raise ValueError(\\'Invalid tool input\\')\\n q=str(a.get(\\'command\\',a.get(\\'cmd\\',\\'\\')))\\n guarded=(n in {\\'Agent\\',\\'Task\\'} and a.get(\\'subagent_type\\') not in {\\'Plan\\',\\'Explore\\'}) or n.endswith(\\'forgejo_pr_merge\\') or n.endswith(\\'production_admission\\') or \\'factory/bin/seat.sh\\' in q\\n parsed=True\\nexcept Exception:\\n guarded=True\\ntry:\\n if not parsed: raise ValueError(\\'Invalid event\\')\\n r=subprocess.run([sys.executable,sys.argv[1],\\'pre\\'],input=payload,text=True,capture_output=True,timeout=8)\\n if r.returncode: raise RuntimeError(\\'Hook child failed\\')\\n if r.stdout:\\n  output=json.loads(r.stdout)\\n  if not isinstance(output,dict) or set(output)!={\\'hookSpecificOutput\\'}: raise ValueError(\\'Invalid hook output\\')\\n  h=output.get(\\'hookSpecificOutput\\')\\n  if not isinstance(h,dict) or set(h)-{\\'hookEventName\\',\\'permissionDecision\\',\\'permissionDecisionReason\\'} or h.get(\\'hookEventName\\')!=\\'PreToolUse\\' or h.get(\\'permissionDecision\\') not in {\\'allow\\',\\'deny\\',\\'ask\\'} or not isinstance(h.get(\\'permissionDecisionReason\\',\\'\\'),str): raise ValueError(\\'Invalid decision\\')\\n sys.stdout.write(r.stdout)\\nexcept Exception:\\n if guarded: print(json.dumps({\\'hookSpecificOutput\\':{\\'hookEventName\\':\\'PreToolUse\\',\\'permissionDecision\\':\\'deny\\',\\'permissionDecisionReason\\':\\'Improve checkpoint hook failed or timed out; repair the plugin before this transition. Reads and planning remain available.\\'}}))\\n')\" \"${CLAUDE_PLUGIN_ROOT}/scripts/skill_gate.py\" pre",
+            "timeout": 10,
+            "onFailure": "block"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Skill|Read|Bash|exec_command|shell|local_shell|mcp__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"import os,runpy,sys;p=sys.argv[1];sys.argv=sys.argv[1:];sys.path[0]=os.path.dirname(p);os.path.isfile(p) and runpy.run_path(p,run_name='__main__')\" \"${CLAUDE_PLUGIN_ROOT}/scripts/skill_gate.py\" post",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
